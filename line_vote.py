@@ -2,24 +2,24 @@ import pyautogui
 import cv2
 import numpy as np
 import time
-from datetime import datetime, timedelta
 
-MEETING_TITLE = "Phison Inference Sync Meeting"
-
-FIRST_ITEM_BUTTON_IMAGE_PATH = "assets/first_item_button.png"
-ITEM_BUTTON_IMAGE_PATH = "assets/item_button.png"
-SCROLL_BUTTON_IMAGE_PATH = "assets/scroll_button.png"
-ENTRY_BUTTON_IMAGE_PATH = "assets/entry_button.png"
-TITLE_BUTTON_IMAGE_PATH = "assets/title_button.png"
-MODIFICATION_BUTTON_IMAGE_PATH = "assets/modification_button.png"
+ASSETS_FOLDER="assets/4k"
+FIRST_ITEM_BUTTON_IMAGE_PATH = f"{ASSETS_FOLDER}/first_item_button.png"
+ITEM_BUTTON_IMAGE_PATH = f"{ASSETS_FOLDER}/item_button.png"
+SCROLL_BUTTON_IMAGE_PATH = f"{ASSETS_FOLDER}/scroll_button.png"
+ENTRY_BUTTON_IMAGE_PATH = f"{ASSETS_FOLDER}/entry_button.png"
+TITLE_BUTTON_IMAGE_PATH = f"{ASSETS_FOLDER}/title_button.png"
+MODIFICATION_BUTTON_IMAGE_PATH = f"{ASSETS_FOLDER}/modification_button.png"
 
 # Because we need to click the down of scroll button to move the page
 SCROLL_CLICK_OFFSET = 50
 FIRST_ITEM_HORIZONTAL_OFFSET = 30
 MODIFICATION_CLICK_OFFSET = 10
 
-WAITING_SEC = 1
+WAITING_SEC = 0.005
 
+MEETING_TITLE = "Phison MoE Sync Meeting"
+DAYS = ["8/11 (mon)", "8/12 (tue)", "8/13 (wed)", "8/14 (thu)", "8/15 (fri)"]
 
 def locate_button(image_path, confidence=0.8):
     screenshot = pyautogui.screenshot()
@@ -66,10 +66,8 @@ def scroll_page(scroll_image_path, offset):
 def click_entry_button(button_image_path):
     button_location = locate_button(button_image_path)
     if button_location:
-        # Click near the center of the button
-        print(button_location)
-        pyautogui.click(button_location[0] + 10, button_location[1] + 10)
-        time.sleep(WAITING_SEC)  # Wait for page to update
+        pyautogui.doubleClick(button_location[0], button_location[1])
+        time.sleep(WAITING_SEC)
         return True
     else:
         print(f"Could not locate the entry button")
@@ -115,8 +113,7 @@ def generate_time_slot_options(days, time_ranges):
 
 
 def main():
-    days = ["9/16 (mon)", "9/17 (tue)", "9/18 (wed)",
-            "9/19 (thu)", "9/20 (fri)"]
+    days = DAYS
     time_ranges = [
         ("9:00", "10:30"),
         ("10:30", "12:00"),
@@ -132,21 +129,21 @@ def main():
     # Click entry button
     click_entry_button(ENTRY_BUTTON_IMAGE_PATH)
 
-    # # set title
-    # set_title(MEETING_TITLE, TITLE_BUTTON_IMAGE_PATH, 0)
+    # set title
+    set_title(MEETING_TITLE, TITLE_BUTTON_IMAGE_PATH, 0)
 
-    # # click
-    # click_modification_button(
-    #     MODIFICATION_BUTTON_IMAGE_PATH, MODIFICATION_CLICK_OFFSET)
+    # click
+    click_modification_button(
+        MODIFICATION_BUTTON_IMAGE_PATH, MODIFICATION_CLICK_OFFSET)
 
-    # # Add each option
-    # for index, option in enumerate(options):
-    #     if index == 0:
-    #         add_vote_option_retry_once(option, FIRST_ITEM_BUTTON_IMAGE_PATH,
-    #                                    FIRST_ITEM_HORIZONTAL_OFFSET, SCROLL_BUTTON_IMAGE_PATH, SCROLL_CLICK_OFFSET)
-    #     else:
-    #         add_vote_option_retry_once(
-    #             option, ITEM_BUTTON_IMAGE_PATH, 0, SCROLL_BUTTON_IMAGE_PATH, SCROLL_CLICK_OFFSET)
+    # Add each option
+    for index, option in enumerate(options):
+        if index == 0:
+            add_vote_option_retry_once(option, FIRST_ITEM_BUTTON_IMAGE_PATH,
+                                       FIRST_ITEM_HORIZONTAL_OFFSET, SCROLL_BUTTON_IMAGE_PATH, SCROLL_CLICK_OFFSET)
+        else:
+            add_vote_option_retry_once(
+                option, ITEM_BUTTON_IMAGE_PATH, 0, SCROLL_BUTTON_IMAGE_PATH, SCROLL_CLICK_OFFSET)
 
 
 if __name__ == "__main__":
